@@ -45,7 +45,7 @@ const setorSampahSchema = new mongoose.Schema({
     waktu: { type: Date, default: Date.now },
     nama: String,
     jenis_sampah: String,
-    jumlah: Number,
+    jumlah: String,
     nominal: Number
 });
 
@@ -116,6 +116,25 @@ app.get('/setorsampah', async (req, res) => {
         res.status(500).send(err);
     }
 });
+
+const historyTransaksiSchema = new mongoose.Schema({
+    waktu: { type: Date, default: Date.now },
+    id_transaksi: String,
+    jenis_sampah: String,
+    jumlah: String,
+    nominal: Number,
+});
+  
+const HistoryTransaksi = mongoose.model('HistoryTransaksi', historyTransaksiSchema);
+
+app.get('/historytransaksi', async (req, res) => {
+    try {
+      const historyTransaksiData = await HistoryTransaksi.find();
+      res.json(historyTransaksiData);
+    } catch (err) {
+      res.status(500).send(err);
+    }
+  });
 
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);

@@ -14,7 +14,7 @@ app.use((req, res, next) => {
     next();
   });
 
-mongoose.connect('mongodb+srv://faeznz:faeznz@data.h3xudui.mongodb.net/?retryWrites=true&w=majority')
+mongoose.connect('mongodb+srv://faeznz:faeznz@data.h3xudui.mongodb.net/CleanEarth?retryWrites=true&w=majority')
 .then(() => {
     console.log('Connected to MongoDB');
 })
@@ -33,12 +33,30 @@ const itemSchema = new mongoose.Schema({
 
 const Item = mongoose.model('Item', itemSchema);
 
+const nasabahSchema = new mongoose.Schema({
+    nama: String,
+    no_telpon: String,
+    alamat: String
+});
+
+const Nasabah = mongoose.model('Nasabah', nasabahSchema);
+
+const setorSampahSchema = new mongoose.Schema({
+    waktu: { type: Date, default: Date.now },
+    nama: String,
+    jenis_sampah: String,
+    jumlah: Number,
+    nominal: Number
+});
+
+const SetorSampah = mongoose.model('SetorSampah', setorSampahSchema);
+
 app.use(express.json());
 
 app.get('/nasabah', async (req, res) => {
     try {
-        const items = await Item.find();
-        res.json(items);
+        const nasabah = await Nasabah.find();
+        res.json(nasabah);
     } catch (err) {
         res.status(500).send(err);
     }
@@ -47,22 +65,21 @@ app.get('/nasabah', async (req, res) => {
 app.get('/nasabah/:id', async (req, res) => {
     const id = req.params.id;
     try {
-        const item = await Item.findById(id);
-        if (!item) {
-            return res.status(404).send('Item not found');
+        const nasabah = await Nasabah.findById(id);
+        if (!nasabah) {
+            return res.status(404).send('Nasabah not found');
         }
-        res.json(item);
+        res.json(nasabah);
     } catch (err) {
         res.status(500).send(err);
     }
 });
 
-
 app.post('/nasabah', async (req, res) => {
-    const newItem = new Item(req.body);
+    const newNasabah = new Nasabah(req.body);
     try {
-        await newItem.save();
-        res.status(201).send(newItem);
+        await newNasabah.save();
+        res.status(201).send(newNasabah);
     } catch (err) {
         res.status(400).send(err);
     }
@@ -71,8 +88,8 @@ app.post('/nasabah', async (req, res) => {
 app.put('/nasabah/:id', async (req, res) => {
     const id = req.params.id;
     try {
-        const item = await Item.findByIdAndUpdate(id, req.body, { new: true });
-        res.send(item);
+        const nasabah = await Nasabah.findByIdAndUpdate(id, req.body, { new: true });
+        res.send(nasabah);
     } catch (err) {
         res.status(400).send(err);
     }
@@ -86,6 +103,15 @@ app.delete('/nasabah/:id', async (req, res) => {
             res.status(404).send();
         }
         res.send(item);
+    } catch (err) {
+        res.status(500).send(err);
+    }
+});
+
+app.get('/setorsampah', async (req, res) => {
+    try {
+        const setorSampahData = await SetorSampah.find();
+        res.json(setorSampahData);
     } catch (err) {
         res.status(500).send(err);
     }

@@ -106,6 +106,56 @@ app.get('/setorsampah', async (req, res) => {
     }
 });
 
+app.post('/setorsampah', async (req, res) => {
+    const newSetorSampah = new SetorSampah(req.body);
+    try {
+        await newSetorSampah.save();
+        res.status(201).send(newSetorSampah);
+    } catch (err) {
+        res.status(400).send(err);
+    }
+});
+
+app.delete('/setorsampah/:id', async (req, res) => {
+    const id = req.params.id;
+    try {
+        const setorSampah = await SetorSampah.findByIdAndDelete(id);
+        if (!setorSampah) {
+            res.status(404).send('Setor Sampah not found');
+        }
+        res.send(setorSampah);
+    } catch (err) {
+        res.status(500).send(err);
+    }
+});
+
+app.get('/setorsampah/:id', async (req, res) => {
+    const id = req.params.id;
+    try {
+        const setorSampah = await SetorSampah.findById(id);
+        if (!setorSampah) {
+            return res.status(404).send('Setor Sampah not found');
+        }
+        res.json(setorSampah);
+    } catch (err) {
+        res.status(500).send(err);
+    }
+});
+
+app.put('/setorsampah/:id', async (req, res) => {
+    const id = req.params.id;
+    try {
+        const setorSampah = await SetorSampah.findByIdAndUpdate(id, req.body, { new: true });
+        if (!setorSampah) {
+            return res.status(404).send('Setor Sampah not found');
+        }
+        res.send(setorSampah);
+    } catch (err) {
+        res.status(400).send(err);
+    }
+});
+
+
 const historyTransaksiSchema = new mongoose.Schema({
     waktu: { type: Date, default: Date.now },
     id_transaksi: String,

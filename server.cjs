@@ -22,17 +22,6 @@ mongoose.connect('mongodb+srv://faeznz:faeznz@data.h3xudui.mongodb.net/CleanEart
     console.error('Failed to connect to MongoDB:', error);
 });
 
-
-const itemSchema = new mongoose.Schema({
-    nama: String,
-    bank: String,
-    nominal: Number,
-    no_telepon: String,
-    alamat: String
-});
-
-const Item = mongoose.model('Item', itemSchema);
-
 const nasabahSchema = new mongoose.Schema({
     nama: String,
     no_telpon: String,
@@ -40,16 +29,6 @@ const nasabahSchema = new mongoose.Schema({
 });
 
 const Nasabah = mongoose.model('Nasabah', nasabahSchema);
-
-const setorSampahSchema = new mongoose.Schema({
-    waktu: { type: Date, default: Date.now },
-    nama: String,
-    jenis_sampah: String,
-    jumlah: String,
-    nominal: Number
-});
-
-const SetorSampah = mongoose.model('SetorSampah', setorSampahSchema);
 
 app.use(express.json());
 
@@ -98,15 +77,25 @@ app.put('/nasabah/:id', async (req, res) => {
 app.delete('/nasabah/:id', async (req, res) => {
     const id = req.params.id;
     try {
-        const item = await Item.findByIdAndDelete(id);
-        if (!item) {
+        const nasabah = await Nasabah.findByIdAndDelete(id);
+        if (!nasabah) {
             res.status(404).send();
         }
-        res.send(item);
+        res.send(nasabah);
     } catch (err) {
         res.status(500).send(err);
     }
 });
+
+const setorSampahSchema = new mongoose.Schema({
+    waktu: { type: Date, default: Date.now },
+    nama: String,
+    jenis_sampah: String,
+    jumlah: String,
+    nominal: Number
+});
+
+const SetorSampah = mongoose.model('SetorSampah', setorSampahSchema);
 
 app.get('/setorsampah', async (req, res) => {
     try {
